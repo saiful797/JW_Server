@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -31,6 +31,12 @@ async function run() {
     app.get('/stock-market-data', async ( req, res) => {
         const result = await stockCollection.find().toArray();
         res.send(result);
+    })
+
+    app.delete('/specific-stock-delete/:id', async( req, res ) => {
+        const query = {_id: new ObjectId(req.params.id)}
+        const result = await stockCollection.deleteOne(query);
+        res.send( result );
     })
 
     // Send a ping to confirm a successful connection
