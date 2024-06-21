@@ -33,6 +33,25 @@ async function run() {
         res.send(result);
     })
 
+    app.get('/stock-data/:id', async ( req, res ) => {
+        const query = {_id: new ObjectId ( req.params.id )};
+        const result = await stockCollection.findOne( query );
+        res.send( result );
+    })
+
+    app.patch('/stock-update/:id', async ( req, res ) => {
+        const filter = {_id: new ObjectId ( req.params.id )};
+        const data = req.body;
+        const updateDoc = {
+            $set: {
+                ...data,
+            }
+        };
+
+        const result = await stockCollection.updateOne( filter, updateDoc );
+        res.send( result );
+    })
+
     app.delete('/specific-stock-delete/:id', async( req, res ) => {
         const query = {_id: new ObjectId(req.params.id)}
         const result = await stockCollection.deleteOne(query);
