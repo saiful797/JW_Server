@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -9,10 +10,7 @@ app.use(express.json());
 app.use(cors());
 
 // Mongodb setup
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.a3qxp45.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -27,7 +25,13 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const stockCollection = client.db('janata-wifi-db').collection('stock-market-data');
 
+    //Stock market data related api
+    app.get('/stock-market-data', async ( req, res) => {
+        const result = await stockCollection.find().toArray();
+        res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
